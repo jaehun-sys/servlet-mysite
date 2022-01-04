@@ -117,5 +117,51 @@ public class UserDaoImpl implements UserDao {
 
 		return list;
 	}
+
+	@Override
+	public boolean update(UserVo vo) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		boolean success = false;
+		int count = 0;
+
+		try {
+			conn = pool.getConnection();
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE  USERS ");
+			sql.append("SET	    NAME = ? 		, ");
+			sql.append("	    EMAIL = ? 		, ");
+			sql.append("	    PASSWORD = ? 	, ");
+			sql.append("	    GENDER = ?        ");
+			sql.append("WHERE	NO = ? ");
+
+			pstmt = conn.prepareStatement(sql.toString());
+
+			int index = 1;
+			pstmt.setString(index++, vo.getName());
+			pstmt.setString(index++, vo.getEmail());
+			pstmt.setString(index++, vo.getPassword());
+			pstmt.setString(index++, vo.getGender());
+			pstmt.setInt(index++, vo.getNo());
+
+			count = pstmt.executeUpdate();
+
+			System.out.println(count + "건 수정");
+			success = true;
+		} catch (Exception e) {
+			System.out.println("error:" + e);
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("error:" + e);
+			}
+		}
+		return success;
+	}
 	
 }

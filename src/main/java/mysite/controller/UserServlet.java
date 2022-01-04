@@ -85,10 +85,11 @@ public class UserServlet extends HttpServlet {
 			rd.forward(request, response);
 
 		} else if("modifyform".equals(actionName)){
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/modifyform.jsp");
+			rd.forward(request, response);
+		} else if("modify".equals(actionName)){
 			
 		} else if("logout".equals(actionName)){
-			
-		} else {
 //			System.out.println("emailKey: " + emailKey);
 //			UserDao dao = new UserDaoImpl();
 //			List<UserVo> list = dao.loginSelect(emailKey, (String)session.getAttribute("sessionPasswd"));
