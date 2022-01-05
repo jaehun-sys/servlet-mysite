@@ -44,7 +44,6 @@ public class UserServlet extends HttpServlet {
 			
 			if(!dao.loginSelect(email, password).isEmpty()) {
 				System.out.println("로그인 success!");
-				
 				session = request.getSession(true);
 				session.setAttribute("sessionEmail", vo.getEmail() );
 				session.setAttribute("sessionPasswd", vo.getPassword() );
@@ -52,6 +51,7 @@ public class UserServlet extends HttpServlet {
 				ArrayList<UserVo> sessionVoList = dao.loginSelect((String)session.getAttribute("sessionEmail"), (String)session.getAttribute("sessionPasswd"));
 				if(!sessionVoList.isEmpty()) {
 					session.setAttribute("authUser", sessionVoList.get(0));
+					session.setAttribute("sessionNo", sessionVoList.get(0).getNo());
 				}else {
 					System.out.println("session 못만든다 임마");
 					session = request.getSession(false);
@@ -85,17 +85,38 @@ public class UserServlet extends HttpServlet {
 			rd.forward(request, response);
 
 		} else if("modifyform".equals(actionName)){
+			UserDao dao = new UserDaoImpl();
+			//ArrayList<UserVo> sessionVoList = dao.loginSelect((String)session.getAttribute("sessionEmail"), (String)session.getAttribute("sessionPasswd"));
+			//sessionVoList.get(0).setPassword((String)session.getAttribute("sessionPasswd"));
+			//System.out.println("모디파이 세션 email: "+sessionVoList.get(0).getEmail());
+			//session.setAttribute("authUser", sessionVoList.get(0));
+			System.out.println("session attribute"+ session.getAttribute("authUser"));
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/modifyform.jsp");
 			rd.forward(request, response);
 		} else if("modify".equals(actionName)){
+			System.out.println("과연 회원수정을 성공할 것인가?");
+			String name = request.getParameter("name");
+			String password = request.getParameter("password");
+			String gender = request.getParameter("gender");
+			int no = (int)session.getAttribute("sessionNo");
+			System.out.println("세션NO: " + no);
+			
+			UserVo vo = new UserVo();
+			vo.setName(name);
+			vo.setPassword(password);
+			vo.setGender(gender);
+			vo.setNo(no);
+			
+			UserDao dao = new UserDaoImpl();
+			dao.update(vo);
+			ArrayList<UserVo> authUserList = dao.loginSelect((String)session.getAttribute("sessionEmail"), password);
+			session.setAttribute("authUser", authUserList.get(0));
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/main/index.jsp");
+			rd.forward(request, response);
 			
 		} else if("logout".equals(actionName)){
-//			System.out.println("emailKey: " + emailKey);
-//			UserDao dao = new UserDaoImpl();
-//			List<UserVo> list = dao.loginSelect(emailKey, (String)session.getAttribute("sessionPasswd"));
-//
-//
-//			request.setAttribute("authUser", list.get(0).getName());
+			session.invalidate();
+			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/main/index.jsp");
 			rd.forward(request, response);
 		}

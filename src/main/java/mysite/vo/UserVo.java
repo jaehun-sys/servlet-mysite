@@ -16,12 +16,18 @@ public class UserVo {
 		this.email = email;
 		this.password = password;
 	}
-	public UserVo(int no, String name, String email, String gender) {
+	@Override
+	public String toString() {
+		return "UserVo [no=" + no + ", name=" + name + ", email=" + email + ", password=" + password + ", gender="
+				+ gender + "]";
+	}
+	public UserVo(int no, String name, String email, String gender, String password) {
 		super();
 		this.no = no;
 		this.name = name;
 		this.email = email;
 		this.gender = gender;
+		this.password = password;
 	}
 	public int getNo() {
 		return no;

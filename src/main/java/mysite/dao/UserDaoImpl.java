@@ -76,7 +76,8 @@ public class UserDaoImpl implements UserDao {
 			sql.append("SELECT 	NO			, ");
 			sql.append("		NAME		, ");
 			sql.append("		EMAIL		, ");
-			sql.append("		GENDER		  ");
+			sql.append("		GENDER		, ");
+			sql.append("		PASSWORD	  ");
 			sql.append("FROM	USERS		  ");
 			sql.append("WHERE	EMAIL = ?	  ");
 			sql.append("AND 	PASSWORD = ?  ");
@@ -93,8 +94,9 @@ public class UserDaoImpl implements UserDao {
 				String name = rs.getString("name");
 				String email = rs.getString("email");
 				String gender = rs.getString("gender");
+				String password = rs.getString("password");
 
-				UserVo vo = new UserVo(no, name, email, gender);
+				UserVo vo = new UserVo(no, name, email, gender, password);
 				list.add(vo);
 			}
 
@@ -131,7 +133,7 @@ public class UserDaoImpl implements UserDao {
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE  USERS ");
 			sql.append("SET	    NAME = ? 		, ");
-			sql.append("	    EMAIL = ? 		, ");
+			//sql.append("	    EMAIL = ? 		, ");
 			sql.append("	    PASSWORD = ? 	, ");
 			sql.append("	    GENDER = ?        ");
 			sql.append("WHERE	NO = ? ");
@@ -140,7 +142,7 @@ public class UserDaoImpl implements UserDao {
 
 			int index = 1;
 			pstmt.setString(index++, vo.getName());
-			pstmt.setString(index++, vo.getEmail());
+			//pstmt.setString(index++, vo.getEmail());
 			pstmt.setString(index++, vo.getPassword());
 			pstmt.setString(index++, vo.getGender());
 			pstmt.setInt(index++, vo.getNo());
