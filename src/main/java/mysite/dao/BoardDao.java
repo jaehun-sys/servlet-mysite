@@ -11,5 +11,7 @@ public interface BoardDao {
 	public boolean update(BoardVo vo);
 	public List<BoardVo> getList();
 	public BoardVo getBoard(int boardno);
+	public boolean upHit(int boardno);
 	
+	public List<BoardVo> findByTitle(String title);
 }

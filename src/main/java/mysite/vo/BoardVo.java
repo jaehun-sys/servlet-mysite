@@ -6,10 +6,10 @@ public class BoardVo {
 	private String title;
 	private String content;
 	private int hit;
-	private String date;
+	private String regdate;
 	private int userno;
+	private String name;
 
-	
 	public BoardVo() {
 		super();
 	}
@@ -19,6 +19,13 @@ public class BoardVo {
 		this.title = title;
 		this.content = content;
 		this.userno = userno;
+	}
+
+	public BoardVo(int no, String title, String content) {
+		super();
+		this.no = no;
+		this.title = title;
+		this.content = content;
 	}
 
 	public int getNo() {
@@ -53,12 +60,12 @@ public class BoardVo {
 		this.hit = hit;
 	}
 
-	public String getDate() {
-		return date;
+	public String getRegdate() {
+		return regdate;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setRegdate(String regdate) {
+		this.regdate = regdate;
 	}
 
 	public int getUserno() {
@@ -68,7 +75,20 @@ public class BoardVo {
 	public void setUserno(int userno) {
 		this.userno = userno;
 	}
-	
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "BoardVo [no=" + no + ", title=" + title + ", content=" + content + ", hit=" + hit + ", regdate="
+				+ regdate + ", userno=" + userno + ", name=" + name + "]";
+	}
+
 	
 }

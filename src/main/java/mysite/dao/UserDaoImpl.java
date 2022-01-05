@@ -165,5 +165,51 @@ public class UserDaoImpl implements UserDao {
 		}
 		return success;
 	}
+
+	@Override
+	public int emailCheckCnt(String email) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		int cnt = 0;
+		try {
+			conn = pool.getConnection();
+
+		      //   cnt=1  아이디 사용중이다.  
+		      //       0  아이디 사용가능하다.
+		    String sql = " SELECT COUNT(*) CNT " + 
+		                 "   FROM USERS " + 
+		                 "  WHERE EMAIL = ? ";
+			
+		    pstmt = conn.prepareStatement(sql);
+		    pstmt.setString(1, email);
+		     
+
+			rs = pstmt.executeQuery();
+			// 4.결과처리
+			if(rs.next()){
+				cnt = rs.getInt("cnt");  // 1      0  
+			}
+
+		} catch (Exception e) {
+			System.out.println("error:" + e);
+		} finally {
+			// 5. 자원정리
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				System.out.println("error:" + e);
+			}
+
+		}
+
+		return cnt;
+	}
 	
 }

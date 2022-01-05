@@ -6,6 +6,40 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href="/mysite/assets/css/user.css" rel="stylesheet" type="text/css">
 	<title>Insert title here</title>
+	
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+   $(document).ready(function (){   
+     // 아이디체크  url : "api/emailCheck.jsp", "/mysite/user",
+     $("#btn-checkid").on("click", function(){
+       
+       // json 형식으로 데이터 set
+       var params = { a      : "idcheck"
+                     , email  : $("[name=email]").val() }
+    
+       $.ajax({
+         url : "api/emailCheck.jsp",
+         type : "post",
+         data : params,
+         dataType : "json",
+         success : function(isExist) {
+           console.log(isExist);
+           if(isExist == false){
+             $("#checkid-msg").text("사용할 수 있는 아이디 입니다.")
+             $("#checkid-msg").css("color", "green")
+           }else {
+             $("#checkid-msg").text("다른 아이디로 가입해 주세요.")
+             $("#checkid-msg").css("color", "red")
+           }
+         },
+         error : function(XHR, status, error) {
+           console.error(status + " : " + error);
+         }
+       });
+     });
+     
+   });//ready
+</script>
 </head>
 <body>
 
@@ -25,7 +59,11 @@
 	
 						<label class="block-label" for="email">이메일</label>
 						<input id="email" name="email" type="text" value="">
-						<input type="button" value="id 중복체크">
+						<!--   <input id="btn-checkid" type="button" value="id 중복체크" >  -->
+						<input id="btn-checkid" type="button" value="id 중복체크" >
+						<p id="checkid-msg" class="form-error">
+			            &nbsp;
+			            </p>
 						
 						<label class="block-label">패스워드</label>
 						<input name="password" type="password" value="">
@@ -50,9 +88,7 @@
 			</div><!-- /content -->
 		</div><!-- /wrapper -->
 		
-		<div id="footer">
-			<p>(c)opyright 2015,2016,2017</p>
-		</div> <!-- /footer -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 		
 	</div> <!-- /container -->
 

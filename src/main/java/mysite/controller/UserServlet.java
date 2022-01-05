@@ -84,7 +84,17 @@ public class UserServlet extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/joinsuccess.jsp");
 			rd.forward(request, response);
 
-		} else if("modifyform".equals(actionName)){
+		} else if("id 중복체크".equals(actionName)) {
+			String email = request.getParameter("email");
+			
+			UserDao dao = new UserDaoImpl();
+			if(dao.emailCheckCnt(email)==0) {
+				System.out.println("중복이메일이다");
+			}else {
+				System.out.println("중복이메일아니다");
+			}
+		}
+		else if("modifyform".equals(actionName)){
 			UserDao dao = new UserDaoImpl();
 			//ArrayList<UserVo> sessionVoList = dao.loginSelect((String)session.getAttribute("sessionEmail"), (String)session.getAttribute("sessionPasswd"));
 			//sessionVoList.get(0).setPassword((String)session.getAttribute("sessionPasswd"));

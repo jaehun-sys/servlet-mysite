@@ -31,7 +31,7 @@ public class BoardServlet extends HttpServlet {
 			BoardDao dao = new BoardDaoImpl();
 			List<BoardVo> list = dao.getList();
 
-			System.out.println(list.toString());
+			//System.out.println(list.toString());
 
 			// 리스트 화면에 보내기
 			request.setAttribute("list", list);
@@ -42,11 +42,12 @@ public class BoardServlet extends HttpServlet {
 			BoardDao dao = new BoardDaoImpl();
 			BoardVo boardVo = dao.getBoard(no);
 
-			System.out.println(boardVo.toString());
+			//System.out.println(boardVo.toString());
 
 			// 게시물 화면에 보내기
 			request.setAttribute("boardVo", boardVo);
-			WebUtil.forward(request, response, "/WEB-INF/views/board/read.jsp");
+			WebUtil.forward(request, response, "/WEB-INF/views/board/view.jsp");
+			dao.upHit(no);	//조회수 증가
 		} else if ("modifyform".equals(actionName)) {
 			// 게시물 가져오기
 			int no = Integer.parseInt(request.getParameter("no"));
@@ -55,14 +56,15 @@ public class BoardServlet extends HttpServlet {
 
 			// 게시물 화면에 보내기
 			request.setAttribute("boardVo", boardVo);
-			WebUtil.forward(request, response, "/WEB-INF/views/board/modifyform.jsp");
+			WebUtil.forward(request, response, "/WEB-INF/views/board/modify.jsp");
 		} else if ("modify".equals(actionName)) {
 			// 게시물 가져오기
 			String title = request.getParameter("title");
 			String content = request.getParameter("content");
 			int no = Integer.parseInt(request.getParameter("no"));
+			System.out.println("여기는 modify, no:"+no);
 			
-			BoardVo vo = new BoardVo(title, content, no);
+			BoardVo vo = new BoardVo(no, title, content);
 			BoardDao dao = new BoardDaoImpl();
 			
 			dao.update(vo);
@@ -72,8 +74,9 @@ public class BoardServlet extends HttpServlet {
 			// 로그인 여부체크
 			UserVo authUser = getAuthUser(request);
 			if (authUser != null) { // 로그인했으면 작성페이지로
-				WebUtil.forward(request, response, "/WEB-INF/views/board/writeform.jsp");
+				WebUtil.forward(request, response, "/WEB-INF/views/board/write.jsp");
 			} else { // 로그인 안했으면 리스트로
+				System.out.println("로그인을 해야함");
 				WebUtil.redirect(request, response, "/mysite/board?a=list");
 			}
 

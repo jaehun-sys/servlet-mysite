@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,29 +11,13 @@
 <body>
 	<div id="container">
 		
-		<div id="header">
-			<h1>MySite</h1>
-			<ul>
-				<li><a href="">로그인</a><li>
-				<li><a href="">회원가입</a><li>
-				<li><a href="">회원정보수정</a><li>
-				<li><a href="">로그아웃</a><li>
-				<li>님 안녕하세요 ^^;</li>
-			</ul>
-		</div>
-		
-		<div id="navigation">
-			<ul>
-				<li><a href="">정종욱</a></li>
-				<li><a href="">방명록</a></li>
-				<li><a href="">게시판</a></li>
-			</ul>
-		</div>
+		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
+		<c:import url="/WEB-INF/views/includes/navigation.jsp"></c:import>
 		
 		<div id="content">
 			<div id="board">
 				<form id="search_form" action="" method="post">
-					<input type="text" id="kwd" name="kwd" value="">
+					<input type="text" id="kwd" name="kwd" placeholder="글 제목을 입력하세요"><!-- 검색 -->
 					<input type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
@@ -44,30 +29,25 @@
 						<th>작성일</th>
 						<th>&nbsp;</th>
 					</tr>				
-					<tr>
-						<td>3</td>
-						<td><a href="">세 번째 글입니다.</a></td>
-						<td>황일영</td>
-						<td>3</td>
-						<td>2015-10-11 12:04:20</td>
-						<td><a href="" class="del">삭제</a></td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td><a href="">두 번째 글입니다.</a></td>
-						<td>정우성</td>
-						<td>3</td>
-						<td>2015-10-02 12:04:12</td>
-						<td><a href="" class="del">삭제</a></td>
-					</tr>
-					<tr>
-						<td>1</td>
-						<td><a href="">첫 번째 글입니다.</a></td>
-						<td>이효리</td>
-						<td>3</td>
-						<td>2015-09-25 07:24:32</td>
-						<td><a href="" class="del">삭제</a></td>
-					</tr>
+					<c:forEach items="${list}" var="vo">
+						<tr>
+							<td>${vo.no }</td>
+							<td><a href="/mysite/board?a=read&no=${vo.no }">${vo.title }</a></td>
+							<td>${vo.name }</td>
+							<td>${vo.hit }</td>
+							<td>${vo.regdate }</td>
+							<c:if test="${authUser.no == vo.userno }">
+							<td><a href="/mysite/board?a=delete&no=${vo.no }" class="del">삭제</a></td>
+							</c:if>
+						</tr>
+						<!--  
+						<tr>
+							<td colspan=4>
+							${fn:replace(vo.content, newLine, "<br>")}
+							</td>
+						</tr>
+						-->
+					</c:forEach>
 				</table>
 				<div class="pager">
 					<ul>
@@ -81,14 +61,12 @@
 					</ul>
 				</div>				
 				<div class="bottom">
-					<a href="" id="new-book">글쓰기</a>
+					<a href="/mysite/board?a=writeform" id="new-book">글쓰기</a>
 				</div>				
 			</div>
 		</div>
 		
-		<div id="footer">
-			<p>(c)opyright 2015,2016,2017</p>
-		</div> <!-- /footer -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 		
 	</div>
 </body>

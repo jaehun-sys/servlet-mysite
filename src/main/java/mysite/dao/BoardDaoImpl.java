@@ -40,6 +40,7 @@ public class BoardDaoImpl implements BoardDao{
 			int index = 1;
 			pstmt.setString(index++, vo.getTitle());
 			pstmt.setString(index++, vo.getContent());
+			pstmt.setInt(index++, vo.getUserno());
 			//pstmt.setString(index++, vo.());
 
 			count = pstmt.executeUpdate();
@@ -114,13 +115,16 @@ public class BoardDaoImpl implements BoardDao{
 			pstmt = conn.prepareStatement(sql.toString());
 			
 			int index = 1;
+			pstmt.setString(index++, vo.getTitle());
+			pstmt.setString(index++, vo.getContent());
 			pstmt.setInt(index++, vo.getNo());
 			
+			System.out.println("여기는 update, no:" + vo.getNo());
 			//실행 결과 리턴. sql 문장 실행 후, 변경된 row 수 int 타입으로 리턴
 			int r = pstmt.executeUpdate();
 			//pstmt.executeQuery() : select
 			//pstmt.executeUpdate() : insert, update, delete
-			System.out.println(r + "건 삭제");
+			System.out.println(r + "건 수정");
 			
 			success = true;
 		}catch(Exception e){
@@ -143,16 +147,19 @@ public class BoardDaoImpl implements BoardDao{
 			conn = pool.getConnection();
 			
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT	NO  									, ");
-			sql.append("		TITLE									, ");
-			sql.append("		CONTENT									, ");
-			sql.append("		HIT			 							, ");
-			sql.append("		TO_CHAR (REGDATE, 'YYYY-MM-DD') REGDATE	, ");
-			sql.append("		USERNO									  ");
-			sql.append("FROM	BOARD ");
+			sql.append(" SELECT	B.NO  		AS NO		, ");
+			sql.append("		B.TITLE		AS TITLE	, ");
+			sql.append("		B.CONTENT	AS CONTENT	, ");
+			sql.append("		B.HIT		AS HIT	 	, ");
+			sql.append("		B.REGDATE	AS REGDATE 	, ");
+			sql.append("		B.USERNO	AS USERNO 	, ");
+			sql.append("		U.NAME 		AS NAME		  ");
+			sql.append(" FROM	BOARD B,	");
+			sql.append("    	USERS U		");
+			sql.append(" WHERE	B.USERNO = U.NO  ");
 			
 			pstmt = conn.prepareStatement(sql.toString());
-			rs = pstmt.executeQuery(sql.toString());
+			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				BoardVo vo = new BoardVo();
@@ -160,11 +167,14 @@ public class BoardDaoImpl implements BoardDao{
 				vo.setTitle(rs.getString("title"));
 				vo.setContent(rs.getString("content"));
 				vo.setHit(rs.getInt("hit"));
-				vo.setDate(rs.getString("date"));
+				vo.setRegdate(rs.getString("regdate"));
 				vo.setUserno(rs.getInt("userno"));
+				vo.setName(rs.getString("name"));
 				
 				list.add(vo);
 			}
+			//System.out.println(list.get(0).toString());
+			
 		}catch(Exception ex) {
 			System.out.println("Exception" + ex);
 		}finally{
@@ -176,8 +186,119 @@ public class BoardDaoImpl implements BoardDao{
 
 	@Override
 	public BoardVo getBoard(int boardno) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		BoardVo vo = new BoardVo();
+		
+		try {
+			conn = pool.getConnection();
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT 	NO		, ");
+			sql.append("		TITLE	, ");
+			sql.append("		CONTENT	, ");
+			sql.append("		USERNO	  ");
+			sql.append("FROM	BOARD     ");
+			sql.append("WHERE 	NO = ?    ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setInt(1, boardno);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				vo.setNo(rs.getInt("no"));
+				vo.setTitle(rs.getString("title"));
+				vo.setContent(rs.getString("content"));
+				vo.setUserno(rs.getInt("userno"));
+			}
+			//System.out.println(vo.toString());
+			
+		}catch(Exception ex) {
+			System.out.println("Exception" + ex);
+		}finally{
+			pool.freeConnection(conn,pstmt,rs);
+		}
+		return vo;
+	}
+
+	@Override
+	public boolean upHit(int boardno) {
+		boolean success = false;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = pool.getConnection();
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE 	BOARD	 			 ");
+			sql.append("SET 	HIT = HIT+1			 ");
+			sql.append("WHERE 	NO = ?		 		 ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			int index = 1;
+			pstmt.setInt(index++, boardno);
+			
+			//실행 결과 리턴. sql 문장 실행 후, 변경된 row 수 int 타입으로 리턴
+			int r = pstmt.executeUpdate();
+			//pstmt.executeQuery() : select
+			//pstmt.executeUpdate() : insert, update, delete
+			System.out.println(r + "조회수 증가");
+			
+			success = true;
+		}catch(Exception e){
+			System.err.println("SQL 에러: " + e.getMessage());
+		}finally{
+			pool.freeConnection(conn, pstmt);
+		}
+		
+		return success;
+	}
+
+	@Override
+	public List<BoardVo> findByTitle(String title) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<BoardVo> list = new ArrayList<BoardVo>();
+		
+		try {
+			conn = pool.getConnection();
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT	NO  		,  ");
+			sql.append("		TITLE		,  ");
+			sql.append("		CONTENT		,  ");
+			sql.append("		HIT			,  ");
+			sql.append("		REGDATE		,  ");
+			sql.append("		USERNO		   ");
+			sql.append(" FROM	BOARD 		   ");
+			sql.append(" WHERE	TITLE LIKE '%?%' ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setString(1, title);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				BoardVo vo = new BoardVo();
+				vo.setNo(rs.getInt("no"));
+				vo.setTitle(rs.getString("title"));
+				vo.setContent(rs.getString("content"));
+				vo.setHit(rs.getInt("hit"));
+				vo.setRegdate(rs.getString("regdate"));
+				vo.setUserno(rs.getInt("userno"));
+				
+				list.add(vo);
+			}
+			//System.out.println(list.get(0).toString());
+			
+		}catch(Exception ex) {
+			System.out.println("Exception" + ex);
+		}finally{
+			pool.freeConnection(conn,pstmt,rs);
+		}
+		return list;
 	}
 
 	
