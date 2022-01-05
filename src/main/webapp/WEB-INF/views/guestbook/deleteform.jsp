@@ -11,29 +11,8 @@
 <body>
 	<div id="container">
 		
-		<div id="header">
-			<h1>MySite</h1>
-			<ul>
-				<!-- 로그인 전 -->
-				<li><a href="">로그인</a></li>
-				<li><a href="">회원가입</a></li>
-				
-				<!-- 로그인 후 -->
-				<!-- 
-				<li><a href="">회원정보수정</a></li>
-				<li><a href="">로그아웃</a></li> 
-				<li> 황일영님 안녕하세요^^;</li>
-				-->
-			</ul>
-		</div> <!-- /header -->
-		
-		<div id="navigation">
-			<ul>
-				<li><a href="">정종욱</a></li>
-				<li><a href="">방명록</a></li>
-				<li><a href="">게시판</a></li>
-			</ul>
-		</div> <!-- /navigation -->
+		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
+		<c:import url="/WEB-INF/views/includes/navigation.jsp"></c:import>
 		
 		<div id="wrapper">
 			<div id="content">
@@ -52,9 +31,7 @@
 			</div><!-- /content -->
 		</div><!-- /wrapper -->
 		
-		<div id="footer">
-			<p>(c)opyright 2015,2016,2017</p>
-		</div> <!-- /footer -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 		
 	</div> <!-- /container -->
 

@@ -41,9 +41,7 @@
 			</div>
 		</div>
 
-		<div id="footer">
-			<p>(c)opyright 2015,2016,2017</p>
-		</div> <!-- /footer -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 	</div>
 </body>
 </html>
