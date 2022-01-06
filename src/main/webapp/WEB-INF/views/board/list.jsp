@@ -49,20 +49,42 @@
 						-->
 					</c:forEach>
 				</table>
+				
 				<div class="pager">
 					<ul>
-						<li><a href="">◀</a></li>
-						<li><a href="">1</a></li>
-						<li><a href="">2</a></li>
-						<li class="selected">3</li>
-						<li><a href="">4</a></li>
-						<li>5</li>
-						<li><a href="">▶</a></li>
+					<c:if test="${paging.prev}">
+						<li><a href="/mysite/board?a=list&page=${paging.beginPage-1}">◀</a></li>
+					</c:if>
+					<c:forEach begin="${paging.beginPage}" end="${paging.endPage}" step="1" var="index">
+						<c:choose>
+							<c:when test="${paging.page==index }">
+							<li class="selected">${index}</li>
+							</c:when>
+							<c:otherwise>
+							<li><a href="/mysite/board?a=list&page=${index}">${index}</a></li>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+					<c:if test="${paging.next}">
+						<li><a href="/mysite/board?a=list&page=${paging.endPage+1}">▶</a></li>
+					</c:if>
 					</ul>
-				</div>				
-				<div class="bottom">
-					<a href="/mysite/board?a=writeform" id="new-book">글쓰기</a>
-				</div>				
+				</div>			
+				
+				<c:choose>
+					<c:when test="${authUser ne null}">
+						<div class="bottom">
+							<a href="/mysite/board?a=writeform" id="new-book">글쓰기</a>
+						</div>	
+					</c:when>
+					<c:otherwise>
+						<!--
+						<div class="bottom">
+							 <a href="" id="new-book">훼이크</a>
+						</div>	
+						 -->
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 		

@@ -14,6 +14,7 @@ import mysite.dao.BoardDao;
 import mysite.dao.BoardDaoImpl;
 import mysite.util.WebUtil;
 import mysite.vo.BoardVo;
+import mysite.vo.Paging;
 import mysite.vo.UserVo;
 
 @WebServlet("/board")
@@ -29,8 +30,20 @@ public class BoardServlet extends HttpServlet {
 		if ("list".equals(actionName)) {
 			// 리스트 가져오기
 			BoardDao dao = new BoardDaoImpl();
-			List<BoardVo> list = dao.getList();
-
+			int page = 1;
+			
+			if(request.getParameter("page")!=null) {
+				page = Integer.parseInt(request.getParameter("page"));
+			}
+			Paging paging = new Paging();
+			paging.setPage(page);
+			paging.setTotalRow(dao.getTotalRow());
+			paging.paging();
+			
+			//paging 객체 화면에 보내기
+			request.setAttribute("paging",paging);
+			
+			List<BoardVo> list = dao.getList(page);
 			//System.out.println(list.toString());
 
 			// 리스트 화면에 보내기

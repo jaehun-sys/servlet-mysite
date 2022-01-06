@@ -9,6 +9,7 @@ import java.util.List;
 
 import mysite.util.DBConnectionMgr;
 import mysite.vo.BoardVo;
+import mysite.vo.Paging;
 
 public class BoardDaoImpl implements BoardDao{
 
@@ -137,32 +138,49 @@ public class BoardDaoImpl implements BoardDao{
 	}
 	
 	@Override
-	public List<BoardVo> getList() {
+	public List<BoardVo> getList(int page) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<BoardVo> list = new ArrayList<BoardVo>();
 		
+		
 		try {
 			conn = pool.getConnection();
+			Paging paging = new Paging();
 			
+			int startRowNo = (page-1)*(paging.getDisplayRow()-1)+1;
+			int endRowNo = page*(paging.getDisplayRow()-1)+1;
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT	B.NO  		AS NO		, ");
-			sql.append("		B.TITLE		AS TITLE	, ");
-			sql.append("		B.CONTENT	AS CONTENT	, ");
-			sql.append("		B.HIT		AS HIT	 	, ");
-			sql.append("		B.REGDATE	AS REGDATE 	, ");
-			sql.append("		B.USERNO	AS USERNO 	, ");
-			sql.append("		U.NAME 		AS NAME		  ");
-			sql.append(" FROM	BOARD B,	");
-			sql.append("    	USERS U		");
-			sql.append(" WHERE	B.USERNO = U.NO  ");
+			sql.append("SELECT *											  ");
+			sql.append("FROM 	( 											  ");
+			sql.append("		SELECT *									  ");
+			sql.append("		FROM		( 								  ");
+			sql.append("					SELECT	ROWNUM		AS ROWNO  	, ");
+			sql.append("							B.NO  		AS NO		, ");
+			sql.append("							B.TITLE		AS TITLE	, ");
+			sql.append("							B.CONTENT	AS CONTENT	, ");
+			sql.append("							B.HIT		AS HIT	 	, ");
+			sql.append("							B.REGDATE	AS REGDATE 	, ");
+			sql.append("							B.USERNO	AS USERNO	, ");
+			sql.append("							U.NAME 		AS NAME		  ");
+			sql.append("					FROM	BOARD B , 				  ");
+			sql.append("							USERS U   				  ");
+			sql.append("					WHERE	B.USERNO = U.NO 		  ");
+			sql.append("					) 								  ");
+			sql.append("		WHERE ROWNO >= ? 							  ");
+			sql.append("		)											  ");
+			sql.append("WHERE ROWNO <= ?									  ");
 			
 			pstmt = conn.prepareStatement(sql.toString());
+			int index = 1;
+			pstmt.setInt(index++, startRowNo);
+			pstmt.setInt(index++, endRowNo);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				BoardVo vo = new BoardVo();
+				vo.setRowno(rs.getInt("rowno"));
 				vo.setNo(rs.getInt("no"));
 				vo.setTitle(rs.getString("title"));
 				vo.setContent(rs.getString("content"));
@@ -173,7 +191,7 @@ public class BoardDaoImpl implements BoardDao{
 				
 				list.add(vo);
 			}
-			//System.out.println(list.get(0).toString());
+			System.out.println(list.size() + "건 조회");
 			
 		}catch(Exception ex) {
 			System.out.println("Exception" + ex);
@@ -299,6 +317,41 @@ public class BoardDaoImpl implements BoardDao{
 			pool.freeConnection(conn,pstmt,rs);
 		}
 		return list;
+	}
+
+	@Override
+	public int getTotalRow() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		//List<BoardVo> list = new ArrayList<BoardVo>();
+		int count = 0;
+		
+		try {
+			conn = pool.getConnection();
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT 	/*+FULL(A) PARALLEL(A 8)*/  COUNT(*) ");
+			sql.append("FROM	BOARD B	,							 ");
+			sql.append("		USERS U								 ");
+			sql.append("WHERE 	B.USERNO = U.NO						 ");
+
+			
+			pstmt = conn.prepareStatement(sql.toString());
+
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				count = rs.getInt("COUNT(*)");
+
+			}
+			
+		}catch(Exception ex) {
+			System.out.println("Exception" + ex);
+		}finally{
+			pool.freeConnection(conn,pstmt,rs);
+		}
+		return count;
 	}
 
 	

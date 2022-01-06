@@ -2,6 +2,7 @@ package mysite.vo;
 
 public class BoardVo {
 	
+	private int rowno;
 	private int no;
 	private String title;
 	private String content;
@@ -28,6 +29,14 @@ public class BoardVo {
 		this.content = content;
 	}
 
+	public int getRowno() {
+		return rowno;
+	}
+	
+	public void setRowno(int rowno) {
+		this.rowno = rowno;
+	}
+	
 	public int getNo() {
 		return no;
 	}
@@ -86,7 +95,7 @@ public class BoardVo {
 
 	@Override
 	public String toString() {
-		return "BoardVo [no=" + no + ", title=" + title + ", content=" + content + ", hit=" + hit + ", regdate="
+		return "BoardVo [no=" + no + ", rowno=" + rowno + ", title=" + title + ", content=" + content + ", hit=" + hit + ", regdate="
 				+ regdate + ", userno=" + userno + ", name=" + name + "]";
 	}
 
