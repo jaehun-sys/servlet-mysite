@@ -182,9 +182,9 @@ public class BoardDaoImpl implements BoardDao{
 			switch(search) {
 			case "name":
 				pstmt.setString(index++, "%"+kwd+"%");	//name
-				pstmt.setString(index++, "%%");		//regdate
-				pstmt.setString(index++, "%%");		//title
-				pstmt.setString(index++, "%%");		//content
+				pstmt.setString(index++, "%%");			//regdate
+				pstmt.setString(index++, "%%");			//title
+				pstmt.setString(index++, "%%");			//content
 				break;
 			case "regdate":
 				pstmt.setString(index++, "%%");

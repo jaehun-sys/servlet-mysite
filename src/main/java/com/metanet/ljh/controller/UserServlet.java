@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import com.metanet.ljh.dao.UserDao;
 import com.metanet.ljh.dao.UserDaoImpl;
+import com.metanet.ljh.util.WebUtil;
 import com.metanet.ljh.vo.UserVo;
 
 @WebServlet("/user")
@@ -60,7 +61,7 @@ public class UserServlet extends HttpServlet {
 				response.sendRedirect("/mysite/main");				
 			}else {
 				System.out.println("로그인 fail!");
-				response.sendRedirect("/mysite/user");
+				response.sendRedirect("/mysite/user?a=loginform");
 			}
 		} else if ("joinform".equals(actionName)) {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/joinform.jsp");
@@ -78,11 +79,17 @@ public class UserServlet extends HttpServlet {
 			vo.setPassword(password);
 			vo.setGender(gender);
 			
-			UserDao dao = new UserDaoImpl();
-			dao.join(vo);
+			System.out.println("회원가입 name: " + vo.getName() + ", email: "+vo.getEmail()+", password: "+vo.getPassword());
+			if(name.equals("") || email.equals("") || password.equals("")) {
+				response.sendRedirect("/mysite/user?a=joinform");
+			}else {
+				UserDao dao = new UserDaoImpl();
+				dao.join(vo);
+				
+				RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/joinsuccess.jsp");
+				rd.forward(request, response);
+			}
 			
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/user/joinsuccess.jsp");
-			rd.forward(request, response);
 
 		} else if("id 중복체크".equals(actionName)) {
 			String email = request.getParameter("email");
@@ -95,7 +102,7 @@ public class UserServlet extends HttpServlet {
 			}
 		}
 		else if("modifyform".equals(actionName)){
-			UserDao dao = new UserDaoImpl();
+			//UserDao dao = new UserDaoImpl();
 			//ArrayList<UserVo> sessionVoList = dao.loginSelect((String)session.getAttribute("sessionEmail"), (String)session.getAttribute("sessionPasswd"));
 			//sessionVoList.get(0).setPassword((String)session.getAttribute("sessionPasswd"));
 			//System.out.println("모디파이 세션 email: "+sessionVoList.get(0).getEmail());
@@ -129,6 +136,8 @@ public class UserServlet extends HttpServlet {
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/main/index.jsp");
 			rd.forward(request, response);
+		}else {
+			WebUtil.redirect(request, response, "/mysite/user?a=login");
 		}
 
 	}
