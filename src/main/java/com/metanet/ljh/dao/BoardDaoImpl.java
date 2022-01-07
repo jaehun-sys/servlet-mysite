@@ -1,4 +1,4 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mysite.util.DBConnectionMgr;
-import mysite.vo.BoardVo;
-import mysite.vo.Paging;
+import com.metanet.ljh.util.DBConnectionMgr;
+import com.metanet.ljh.vo.BoardVo;
+import com.metanet.ljh.vo.Paging;
 
 public class BoardDaoImpl implements BoardDao{
 
@@ -138,7 +138,7 @@ public class BoardDaoImpl implements BoardDao{
 	}
 	
 	@Override
-	public List<BoardVo> getList(int page) {
+	public List<BoardVo> getList(int page, String search, String kwd) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -148,32 +148,70 @@ public class BoardDaoImpl implements BoardDao{
 		try {
 			conn = pool.getConnection();
 			Paging paging = new Paging();
-			
 			int startRowNo = (page-1)*(paging.getDisplayRow()-1)+1;
 			int endRowNo = page*(paging.getDisplayRow()-1)+1;
+			
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT *											  ");
-			sql.append("FROM 	( 											  ");
-			sql.append("		SELECT *									  ");
-			sql.append("		FROM		( 								  ");
-			sql.append("					SELECT	ROWNUM		AS ROWNO  	, ");
-			sql.append("							B.NO  		AS NO		, ");
-			sql.append("							B.TITLE		AS TITLE	, ");
-			sql.append("							B.CONTENT	AS CONTENT	, ");
-			sql.append("							B.HIT		AS HIT	 	, ");
-			sql.append("							B.REGDATE	AS REGDATE 	, ");
-			sql.append("							B.USERNO	AS USERNO	, ");
-			sql.append("							U.NAME 		AS NAME		  ");
-			sql.append("					FROM	BOARD B , 				  ");
-			sql.append("							USERS U   				  ");
-			sql.append("					WHERE	B.USERNO = U.NO 		  ");
-			sql.append("					) 								  ");
-			sql.append("		WHERE ROWNO >= ? 							  ");
-			sql.append("		)											  ");
-			sql.append("WHERE ROWNO <= ?									  ");
+			sql.append("SELECT *											  							  ");
+			sql.append("FROM 	( 											  							  ");
+			sql.append("		SELECT *									  							  ");
+			sql.append("		FROM	( 								  								  ");
+			sql.append("				SELECT	ROWNUM										AS ROWNO  	, ");
+			sql.append("						B.NO  										AS NO		, ");
+			sql.append("						B.TITLE										AS TITLE	, ");
+			sql.append("						B.CONTENT									AS CONTENT	, ");
+			sql.append("						B.HIT										AS HIT	 	, ");
+			sql.append("						TO_CHAR(B.REGDATE, 'YYYY-MM-DD HH24:MI')	AS REGDATE 	, ");
+			sql.append("						B.USERNO									AS USERNO	, ");
+			sql.append("						U.NAME 										AS NAME		  ");
+			sql.append("				FROM	BOARD B , 												  ");
+			sql.append("						USERS U   												  ");
+			sql.append("				WHERE	B.USERNO = U.NO 		  								  ");
+			sql.append("				AND 	NAME 									LIKE	? 		  ");
+			sql.append("				AND 	TO_CHAR(REGDATE, 'YYYY-MM-DD HH24:MI') 	LIKE	? 		  ");
+			sql.append("				AND 	TITLE 									LIKE	? 		  ");
+			sql.append("				AND 	CONTENT 								LIKE	? 		  ");
+			sql.append("				) 								  								  ");
+			sql.append("		WHERE ROWNO >= ? 							  							  ");
+			sql.append("		)											  							  ");
+			sql.append("WHERE ROWNO <= ?									  							  ");
 			
 			pstmt = conn.prepareStatement(sql.toString());
 			int index = 1;
+			
+			switch(search) {
+			case "name":
+				pstmt.setString(index++, "%"+kwd+"%");	//name
+				pstmt.setString(index++, "%%");		//regdate
+				pstmt.setString(index++, "%%");		//title
+				pstmt.setString(index++, "%%");		//content
+				break;
+			case "regdate":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				break;
+			case "title":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				pstmt.setString(index++, "%%");
+				break;
+			case "content":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				break;
+			default:
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				break;
+			}
+			
 			pstmt.setInt(index++, startRowNo);
 			pstmt.setInt(index++, endRowNo);
 			rs = pstmt.executeQuery();
@@ -275,52 +313,7 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public List<BoardVo> findByTitle(String title) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List<BoardVo> list = new ArrayList<BoardVo>();
-		
-		try {
-			conn = pool.getConnection();
-			
-			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT	NO  		,  ");
-			sql.append("		TITLE		,  ");
-			sql.append("		CONTENT		,  ");
-			sql.append("		HIT			,  ");
-			sql.append("		REGDATE		,  ");
-			sql.append("		USERNO		   ");
-			sql.append(" FROM	BOARD 		   ");
-			sql.append(" WHERE	TITLE LIKE '%?%' ");
-			
-			pstmt = conn.prepareStatement(sql.toString());
-			pstmt.setString(1, title);
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				BoardVo vo = new BoardVo();
-				vo.setNo(rs.getInt("no"));
-				vo.setTitle(rs.getString("title"));
-				vo.setContent(rs.getString("content"));
-				vo.setHit(rs.getInt("hit"));
-				vo.setRegdate(rs.getString("regdate"));
-				vo.setUserno(rs.getInt("userno"));
-				
-				list.add(vo);
-			}
-			//System.out.println(list.get(0).toString());
-			
-		}catch(Exception ex) {
-			System.out.println("Exception" + ex);
-		}finally{
-			pool.freeConnection(conn,pstmt,rs);
-		}
-		return list;
-	}
-
-	@Override
-	public int getTotalRow() {
+	public int getTotalRow(String search, String kwd) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -335,10 +328,48 @@ public class BoardDaoImpl implements BoardDao{
 			sql.append("FROM	BOARD B	,							 ");
 			sql.append("		USERS U								 ");
 			sql.append("WHERE 	B.USERNO = U.NO						 ");
+			sql.append("AND 	NAME	LIKE 	?				 	 ");
+			sql.append("AND 	REGDATE	LIKE 	?				 	 ");
+			sql.append("AND 	TITLE	LIKE 	?				 	 ");
+			sql.append("AND 	CONTENT	LIKE 	?				 	 ");
 
 			
 			pstmt = conn.prepareStatement(sql.toString());
 
+			int index = 1;
+			switch(search) {
+			case "name":
+				pstmt.setString(index++, "%"+kwd+"%");	//name
+				pstmt.setString(index++, "%%");			//regdate
+				pstmt.setString(index++, "%%");			//title
+				pstmt.setString(index++, "%%");			//content
+				break;
+			case "regdate":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				break;
+			case "title":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				pstmt.setString(index++, "%%");
+				break;
+			case "content":
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%"+kwd+"%");
+				break;
+			default:
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				pstmt.setString(index++, "%%");
+				break;
+			}
+			
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {

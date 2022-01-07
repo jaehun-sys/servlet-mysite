@@ -1,8 +1,8 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
 import java.util.ArrayList;
 
-import mysite.vo.UserVo;
+import com.metanet.ljh.vo.UserVo;
 
 public interface UserDao {
 	public int join(UserVo vo);

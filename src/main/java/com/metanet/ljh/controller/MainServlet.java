@@ -1,4 +1,4 @@
-package mysite.controller;
+package com.metanet.ljh.controller;
 
 import java.io.IOException;
 

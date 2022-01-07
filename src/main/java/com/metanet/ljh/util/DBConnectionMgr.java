@@ -24,7 +24,7 @@
  */
 
 
-package mysite.util;
+package com.metanet.ljh.util;
 
 import java.sql.Connection;
 import java.sql.Driver;

@@ -16,8 +16,15 @@
 		
 		<div id="content">
 			<div id="board">
-				<form id="search_form" action="" method="post">
-					<input type="text" id="kwd" name="kwd" placeholder="글 제목을 입력하세요"><!-- 검색 -->
+				<form id="search_form" action="/mysite/board" method="get">
+				<input type = "hidden" name = "a" value="list">
+					<select name="search">
+					   <option value="name">작성자</option>
+					   <option value="regdate">작성일시</option>
+					   <option value="title">제목</option>
+					   <option value="content">내용</option>
+					</select>
+					<input type="text" id="kwd" name="kwd" placeholder="검색 키워드를 입력하세요"><!-- 검색 -->
 					<input type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
@@ -61,7 +68,7 @@
 							<li class="selected">${index}</li>
 							</c:when>
 							<c:otherwise>
-							<li><a href="/mysite/board?a=list&page=${index}">${index}</a></li>
+							<li><a href="/mysite/board?a=list&search=${search}&kwd=${kwd}&page=${index}">${index}</a></li>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>

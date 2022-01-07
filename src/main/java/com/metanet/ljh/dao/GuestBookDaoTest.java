@@ -1,8 +1,8 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
 import java.util.List;
 
-import mysite.vo.GuestBookVo;
+import com.metanet.ljh.vo.GuestBookVo;
 
 public class GuestBookDaoTest {
 

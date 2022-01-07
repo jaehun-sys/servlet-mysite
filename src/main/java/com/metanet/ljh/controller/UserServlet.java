@@ -1,4 +1,4 @@
-package mysite.controller;
+package com.metanet.ljh.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import mysite.dao.UserDao;
-import mysite.dao.UserDaoImpl;
-import mysite.vo.UserVo;
+import com.metanet.ljh.dao.UserDao;
+import com.metanet.ljh.dao.UserDaoImpl;
+import com.metanet.ljh.vo.UserVo;
 
 @WebServlet("/user")
 public class UserServlet extends HttpServlet {

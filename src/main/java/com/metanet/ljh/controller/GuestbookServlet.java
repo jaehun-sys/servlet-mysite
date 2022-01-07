@@ -1,4 +1,4 @@
-package mysite.controller;
+package com.metanet.ljh.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import mysite.dao.GuestBookDao;
-import mysite.dao.GuestBookDaoImpl;
-import mysite.vo.GuestBookVo;
+import com.metanet.ljh.dao.GuestBookDao;
+import com.metanet.ljh.dao.GuestBookDaoImpl;
+import com.metanet.ljh.vo.GuestBookVo;
 
 @WebServlet("/gb")
 public class GuestbookServlet extends HttpServlet {

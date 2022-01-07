@@ -1,4 +1,4 @@
-package mysite.vo;
+package com.metanet.ljh.vo;
 
 public class Paging {
 	

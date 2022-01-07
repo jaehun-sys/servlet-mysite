@@ -1,4 +1,4 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mysite.util.DBConnectionMgr;
-import mysite.vo.GuestBookVo;
+import com.metanet.ljh.util.DBConnectionMgr;
+import com.metanet.ljh.vo.GuestBookVo;
 
 public class GuestBookDaoImpl implements GuestBookDao{
 	

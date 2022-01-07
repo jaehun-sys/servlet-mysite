@@ -1,4 +1,4 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import mysite.util.DBConnectionMgr;
-import mysite.vo.UserVo;
+import com.metanet.ljh.util.DBConnectionMgr;
+import com.metanet.ljh.vo.UserVo;
 
 public class UserDaoImpl implements UserDao {
 

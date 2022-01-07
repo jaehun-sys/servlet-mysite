@@ -1,4 +1,4 @@
-package mysite.controller;
+package com.metanet.ljh.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import mysite.dao.BoardDao;
-import mysite.dao.BoardDaoImpl;
-import mysite.util.WebUtil;
-import mysite.vo.BoardVo;
-import mysite.vo.Paging;
-import mysite.vo.UserVo;
+import com.metanet.ljh.dao.BoardDao;
+import com.metanet.ljh.dao.BoardDaoImpl;
+import com.metanet.ljh.util.WebUtil;
+import com.metanet.ljh.vo.BoardVo;
+import com.metanet.ljh.vo.Paging;
+import com.metanet.ljh.vo.UserVo;
 
 @WebServlet("/board")
 public class BoardServlet extends HttpServlet {
@@ -28,8 +28,20 @@ public class BoardServlet extends HttpServlet {
 		System.out.println("board:" + actionName);
 
 		if ("list".equals(actionName)) {
-			// 리스트 가져오기
 			BoardDao dao = new BoardDaoImpl();
+
+			//검색 키워드 받기
+			String search="";
+			String kwd="";
+			
+			if(request.getParameter("search")!=null && request.getParameter("kwd")!=null) {				
+				search = request.getParameter("search");
+				kwd = request.getParameter("kwd");
+			}
+			System.out.println("여기는 BoardServlet search: "+search);
+			System.out.println("여기는 BoardServlet kwd: "+kwd);
+			
+			// 리스트 가져오기(페이징)
 			int page = 1;
 			
 			if(request.getParameter("page")!=null) {
@@ -37,13 +49,15 @@ public class BoardServlet extends HttpServlet {
 			}
 			Paging paging = new Paging();
 			paging.setPage(page);
-			paging.setTotalRow(dao.getTotalRow());
+			paging.setTotalRow(dao.getTotalRow(search, kwd));
 			paging.paging();
 			
 			//paging 객체 화면에 보내기
 			request.setAttribute("paging",paging);
+			request.setAttribute("search",search);
+			request.setAttribute("kwd",kwd);
 			
-			List<BoardVo> list = dao.getList(page);
+			List<BoardVo> list = dao.getList(page, search, kwd);
 			//System.out.println(list.toString());
 
 			// 리스트 화면에 보내기

@@ -1,6 +1,6 @@
-package mysite.dao;
+package com.metanet.ljh.dao;
 
-import mysite.vo.UserVo;
+import com.metanet.ljh.vo.UserVo;
 
 public class UserDaoTest {
 	public static void main(String[] args) {
