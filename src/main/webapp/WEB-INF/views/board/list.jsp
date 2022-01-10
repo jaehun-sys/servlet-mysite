@@ -60,7 +60,7 @@
 				<div class="pager">
 					<ul>
 					<c:if test="${paging.prev}">
-						<li><a href="/mysite/board?a=list&page=${paging.beginPage-1}">◀</a></li>
+						<li><a href="/mysite/board?a=list&search=${search}&kwd=${kwd}&page=${paging.beginPage-1}">◀</a></li>
 					</c:if>
 					<c:forEach begin="${paging.beginPage}" end="${paging.endPage}" step="1" var="index">
 						<c:choose>
@@ -73,7 +73,7 @@
 						</c:choose>
 					</c:forEach>
 					<c:if test="${paging.next}">
-						<li><a href="/mysite/board?a=list&page=${paging.endPage+1}">▶</a></li>
+						<li><a href="/mysite/board?a=list&search=${search}&kwd=${kwd}&page=${paging.endPage+1}">▶</a></li>
 					</c:if>
 					</ul>
 				</div>			
